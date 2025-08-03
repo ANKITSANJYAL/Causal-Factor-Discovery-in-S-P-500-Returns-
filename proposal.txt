@@ -1,0 +1,138 @@
+✅ Project Proposal:
+"Causal Factor Discovery in S&P 500 Returns using Double Machine Learning"
+🎯 Objective
+To estimate the causal effect of selected financial factors (e.g., volatility, momentum, trend) on the next-day return of S&P 500 stocks using Double Machine Learning (DML). We aim to go beyond correlation and build an interpretable, rigorous framework for understanding market dynamics from a causal lens.
+
+📌 Problem Statement
+Traditional models predict returns using statistical relationships, but these are prone to bias from confounders.
+Goal: Use Double Machine Learning to estimate the Conditional Average Treatment Effect (CATE) of each factor on returns while controlling for confounders, offering a causally valid signal discovery framework.
+
+🧠 Theoretical Backbone
+We follow the framework from Chernozhukov et al. (2018):
+
+Step 1: Model the nuisance components (treatment and outcome regressions)
+
+Step 2: Orthogonalize them to eliminate bias
+
+Step 3: Estimate treatment effects using a meta-learner (linear or ML)
+
+We’ll use:
+
+Treatment variable (T): A selected factor (e.g., volatility or momentum)
+
+Outcome (Y): Next-day return
+
+Controls (X): Other confounding financial indicators
+
+🗃️ Data Sources and Variables
+✅ Ticker Universe
+S&P 500 constituents — e.g., pick 1–5 stocks (e.g., AAPL, MSFT, JPM, XOM, AMZN) for today’s sprint
+
+✅ Features
+Category	Variables Used
+Return	Daily returns (used as target)
+Volatility	Rolling standard deviation (5-day window)
+Momentum	5-day cumulative return
+Trend	Moving averages (5d, 10d, 20d)
+Liquidity	Daily volume (log scaled)
+Macro (if time)	VIX, FRED interest rates (optional)
+
+🛠️ Tools and Libraries
+Purpose	Tool
+Data	yfinance, pandas, numpy
+ML Models	econml, sklearn, xgboost
+Visualizations	matplotlib, seaborn, shap
+Report/Logs	markdown, jupyter, .txt for logs
+
+🧱 Pipeline Overview
+Step 1: Data Preparation
+Pull OHLCV data for selected S&P 500 stocks (2019–2024)
+
+Compute features:
+
+Daily returns: (close_t - close_{t-1}) / close_{t-1}
+
+5-day momentum: (close_t / close_{t-5}) - 1
+
+5-day rolling volatility (stddev of returns)
+
+Moving averages: 5d, 10d, 20d
+
+Log(volume)
+
+Drop NA rows due to rolling windows
+
+Align X (features), T (treatment), and Y (target)
+
+Step 2: Causal Modeling (DML)
+We will model:
+
+T = treatment variable = e.g., 5-day momentum
+
+Y = outcome = next-day return
+
+X = controls = e.g., volatility, moving averages, volume
+
+We use:
+
+python
+Copy
+Edit
+from econml.dml import LinearDML
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LassoCV
+Example setup:
+
+python
+Copy
+Edit
+model = LinearDML(
+    model_y=RandomForestRegressor(n_estimators=100),
+    model_t=LassoCV(),
+    discrete_treatment=False,
+    random_state=0
+)
+model.fit(Y, T, X=X)
+Step 3: Evaluation & Analysis
+Print ATE:
+
+python
+Copy
+Edit
+print("ATE:", model.ate(X))
+Plot CATE vs. Feature:
+
+python
+Copy
+Edit
+cate = model.effect(X)
+plt.scatter(X['volatility'], cate)
+plt.title('Causal Effect of Momentum vs Volatility')
+SHAP (optional) for model_y or model_t:
+
+python
+Copy
+Edit
+import shap
+explainer = shap.Explainer(model.model_y)
+shap_values = explainer(X)
+shap.plots.beeswarm(shap_values)
+📊 Outputs and Interpretation
+ATE: One value per treatment → tells you global causal effect
+
+CATE plots: See how causal effect changes with confounders (X)
+
+Discussion:
+
+Does momentum cause positive returns when volatility is low?
+
+Is the causal effect stable across different market conditions?
+
+📁 Final Deliverables
+Deliverable	Details
+main.py or notebook	Complete, runnable pipeline
+README.md	Setup, run instructions
+training_log.txt	Log of training metrics, ATEs
+report.pdf/md	Short report with: Intro, Methods, Plots, Insights
+sample_data.csv	(If not pulling live) Sample data to reproduce results
+results/	Visuals (plots, SHAP)

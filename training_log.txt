@@ -1,0 +1,5 @@
+Ticker: AAPL | ATE: 0.091588 | N Test: 330
+Ticker: MSFT | ATE: 0.018021 | N Test: 330
+Ticker: JPM | ATE: 0.039092 | N Test: 330
+Ticker: XOM | ATE: -0.012953 | N Test: 330
+Ticker: AMZN | ATE: 0.047931 | N Test: 330
