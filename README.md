@@ -116,12 +116,6 @@ This script will:
 - Gu, Kelly & Xiu (2020). *Empirical Asset Pricing via Machine Learning*
 - Athey & Imbens (2015). *Causal Inference for Statistics, Social and Biomedical Sciences*
 
----
-
-## 🧾 Citation
-```
-Ankit Sanjyal. Causal Factor Discovery in S&P 500 Returns: A Double Machine Learning Approach with Predictive Benchmarking. 2025.
-```
 
 ---
 
